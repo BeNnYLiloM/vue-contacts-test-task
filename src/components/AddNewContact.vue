@@ -67,7 +67,11 @@ export default {
 
       if (this.required) {
         const contacts = this.$store.state.contact.contacts;
-        const id = contacts[contacts.length - 1].id + 1;
+        let id = 1;
+
+        if (contacts[contacts.length - 1]) {
+          id = contacts[contacts.length - 1].id + 1;
+        }
 
         this.newContact.id = id;
         this.$store.commit(mutationTypes.addNewContact, this.newContact);

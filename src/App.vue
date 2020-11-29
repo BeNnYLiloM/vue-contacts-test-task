@@ -107,6 +107,12 @@ img {
   color: #f1828d;
 }
 
+.hor-line {
+  border-top: 1px solid #765d69;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
 @media (max-width: 540px) {
   .btn:not(.btn-delete) {
     width: 100%;

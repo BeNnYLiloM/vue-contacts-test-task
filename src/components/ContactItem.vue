@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div class="contact">
+    <h2 class="main-title" v-if="!contact">
+      Contact by id {{ contactId }} was not found!
+    </h2>
+
+    <div class="contact" v-else>
       <div class="contact__name main-title">
         {{ contact.name }}
       </div>
@@ -63,6 +67,12 @@
           Cancel last changes
         </button>
 
+        <div class="hor-line"></div>
+
+        <ul class="error" v-if="hasProperty">
+          <li>This field is already exist</li>
+        </ul>
+
         <AddNewField v-if="!isEdit" @addNewField="addNewField" />
       </div>
     </div>
@@ -85,7 +95,8 @@ export default {
       errors: {},
       required: false,
       newField: {},
-      isModified: false
+      isModified: false,
+      hasProperty: false
     };
   },
 
@@ -215,7 +226,15 @@ export default {
         id: this.contactId
       };
 
-      this.$store.commit(mutationTypes.addNewField, data);
+      this.hasProperty = false;
+
+      if (this.contact[data.newField.name] !== undefined) {
+        this.hasProperty = true;
+      }
+
+      if (!this.hasProperty) {
+        this.$store.commit(mutationTypes.addNewField, data);
+      }
     }
   }
 };

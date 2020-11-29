@@ -1,7 +1,5 @@
 <template>
   <div class="add-new-field">
-    <div class="hor-line"></div>
-
     <div class="sub-title">Add new field</div>
 
     <ul class="error" v-if="error">
@@ -54,7 +52,10 @@ export default {
       if (this.newField.name) {
         this.error = false;
         this.$emit("addNewField", this.newField);
-        this.newField = {};
+        this.newField = {
+          name: "",
+          val: ""
+        };
       } else {
         this.error = true;
       }
@@ -66,12 +67,6 @@ export default {
 <style scoped>
 .contact__form-item {
   margin-bottom: 12px;
-}
-
-.hor-line {
-  border-top: 1px solid #765d69;
-  margin-top: 18px;
-  margin-bottom: 18px;
 }
 
 .add-new-field {
