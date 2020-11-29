@@ -8,7 +8,7 @@
       <li>{{ errorText }}</li>
     </ul>
 
-    <form @submit.prevent="addNewField">
+    <form @submit.prevent="validateForm">
       <FormItem
         v-model="newField.name"
         :label="'Name of new field*'"
@@ -32,12 +32,14 @@
 
 <script>
 import FormItem from "@/components/FormItem";
-import { mutationTypes } from "@/store/modules/contact";
 
 export default {
   data() {
     return {
-      newField: {},
+      newField: {
+        name: "",
+        val: ""
+      },
       error: false,
       errorText: "'Name of new field' can`t be blank"
     };
@@ -48,11 +50,10 @@ export default {
   },
 
   methods: {
-    // add new field
-    addNewField() {
+    validateForm() {
       if (this.newField.name) {
         this.error = false;
-        this.$store.commit(mutationTypes.addNewField, this.newField);
+        this.$emit("addNewField", this.newField);
         this.newField = {};
       } else {
         this.error = true;

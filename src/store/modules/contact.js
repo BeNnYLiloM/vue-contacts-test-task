@@ -74,8 +74,6 @@ const state = {
       "phone": "024-648-3804"
     }
   ],
-  contact: null,
-  contactIndex: null,
   prevStateOfContact: {}
 };
 
@@ -103,11 +101,10 @@ const mutations = {
 
   // update contact
   [mutationTypes.updateContact](state, data) {
-    Object.keys(state.contact).forEach(key => {
-      if (data.updateData[key]) {
-        Vue.set(state.contacts[state.contactIndex], key, data.updateData[key]);
-      }
-    });
+    const index = state.contacts.findIndex(contact => contact.id === data.id);
+    const updatedContact = {...state.contacts[index], ...data.updateData};
+
+    Vue.set(state.contacts, index, updatedContact);
   },
 
   // add new contact
@@ -117,29 +114,25 @@ const mutations = {
 
   // delete contact
   [mutationTypes.deleteContact](state, id) {
-    let index = null;
+    let index = state.contacts.findIndex(contact => contact.id === id);
 
-    state.contacts.find((contact, i) => {
-      if (contact.id === id) {
-        index = i;
-      }
-    });
-
-    state.contacts.splice(index, 1);
+    if (index !== -1) {
+      state.contacts.splice(index, 1);
+    }
   },
 
   // add new field to contact
-  [mutationTypes.addNewField](state, field) {
-    if (!field.val) {
-      field.val = '';
-    }
+  [mutationTypes.addNewField](state, data) {
+    const index = state.contacts.findIndex(contact => contact.id === data.id);
 
-    Vue.set(state.contacts[state.contactIndex], field.name, field.val);
+    Vue.set(state.contacts[index], data.newField.name, data.newField.val);
   },
 
   // delete field in contact
-  [mutationTypes.deleteField](state, fieldName) {
-    Vue.delete(state.contacts[state.contactIndex], fieldName);
+  [mutationTypes.deleteField](state, data) {
+    const index = state.contacts.findIndex(contact => contact.id === data.id);
+
+    Vue.delete(state.contacts[index], data.fieldName);
   }
 };
 
@@ -152,14 +145,9 @@ const getters = {
   // get contact
   [getterTypes.getContact](state) {
     return id => {
-      if (!state.loading) {
-        return state.contacts.find((contact, index) => {
-          state.contact = contact;
-          state.contactIndex = index;
-
-          return contact.id === id;
-        });
-      }
+      return state.contacts.find((contact) => {
+        return contact.id === id;
+      });
     };
   }
 };

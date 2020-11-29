@@ -63,7 +63,7 @@
           Cancel last changes
         </button>
 
-        <AddNewField v-if="!isEdit" />
+        <AddNewField v-if="!isEdit" @addNewField="addNewField" />
       </div>
     </div>
   </div>
@@ -141,7 +141,8 @@ export default {
     // update contact
     updateContact() {
       const data = {
-        updateData: this.editedContact
+        updateData: this.editedContact,
+        id: this.contactId
       };
 
       this.hasErrors = false;
@@ -181,19 +182,40 @@ export default {
 
     // delete field
     delField(fieldName) {
+      this.$store.state.contact.prevStateOfContact = JSON.parse(
+        JSON.stringify(this.contact)
+      );
+
       if (confirm("Are you sure you want to delete this field?")) {
-        this.$store.commit(mutationTypes.deleteField, fieldName);
+        const data = {
+          fieldName,
+          id: this.contactId
+        };
+
+        this.$store.commit(mutationTypes.deleteField, data);
+        this.isModified = true;
       }
     },
 
     // cancel last changes
     cancelLastChanges() {
       const data = {
-        updateData: this.$store.state.contact.prevStateOfContact
+        updateData: this.$store.state.contact.prevStateOfContact,
+        id: this.contactId
       };
 
       this.$store.commit(mutationTypes.updateContact, data);
       this.isModified = false;
+    },
+
+    // add new field
+    addNewField(newField) {
+      const data = {
+        newField,
+        id: this.contactId
+      };
+
+      this.$store.commit(mutationTypes.addNewField, data);
     }
   }
 };
